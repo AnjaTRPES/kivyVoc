@@ -1,0 +1,419 @@
+#:kivy 1.0.9
+
+            
+<ScrollableLabel>:
+    Label:
+        size_hint_y: None
+        height: self.texture_size[1]
+        text_size: self.width, None
+        text: root.text
+<AnjaButton@Button>:
+    canvas:
+        Clear
+        Color:
+            rgb: (0.1, 0.1, 0.1)
+        RoundedRectangle:
+            pos: (self.pos[0]+5,self.pos[1]+5)
+            size: (self.size[0]-10,self.size[1]-10)
+            radius: [30]
+        Color:
+            rgb: (1, 1, 1)
+        RoundedRectangle:
+            pos: (self.pos[0]+10,self.pos[1]+10)
+            size: (self.size[0]-20,self.size[1]-20)
+            radius: [30]
+        Rectangle:
+            pos: (self.pos[0]+self.width/2-self.texture_size[0]/2,self.pos[1]+self.height/2-self.texture_size[1]/2)
+            size: self.texture_size
+            texture: self.texture
+    font_size: '40sp'
+    color: 0,0,0,1
+    outline_color: 1,1,1,1
+
+<AnjaScreen@Screen>:
+    canvas:
+        Clear
+        Color:
+            rgb: (0.8, 0.8, 0.8)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<AnjaLabel@Label>:
+    color: 0,0,0,1
+    font_size: '20sp'
+
+<AnjaTextInput@TextInput>:
+    font_size: '30sp'
+
+
+
+<AnjaFloatInput@FloatInput>:
+    font_size: '30sp'
+
+<VokabelTrainer>:
+    AnjaScreen:
+        size: root.width,root.height
+        name: 'start_screen'
+        id: screen1
+        GridLayout:
+            cols:2
+            padding: 40
+            GridLayout:
+                cols: 2
+                GridLayout:
+                    rows: 2
+                    #size_hint: None, None
+                    AnjaLabel:
+                        id: test_verify
+                        text: '[ref=Russian]Russian[/ref]'
+                        size_hint: 1.,0.1
+                        bold: True
+                        markup: True
+                        on_ref_press: root.sort_alphabetically('russian')
+                    ScrollView:
+                        #do_scroll_x: True
+                        do_scroll_y: True
+                        #cols: 1
+                        id: id_scrollView_german
+                        on_scroll_move: root.scroll_moving('russian')
+                        AnjaLabel:
+                            size_hint_y: None
+                            #size_hint_x: None
+                            height: self.texture_size[1]
+                            text: str(root.german_text)
+                            on_ref_press: root.call_modify_word_screen(args[1],'russian')
+                            #size_hint: 1.,0.9
+                            halign: 'left'
+                            markup: True
+                            #padding: 30,0
+                        
+                GridLayout:
+                    rows: 2
+                    AnjaLabel:
+                        text: '[ref=german]German[/ref]'
+                        size_hint: 1.,0.1
+                        bold: True
+                        markup: True
+                        on_ref_press: root.sort_alphabetically('german')
+                        
+                    ScrollView:
+                        #cols: 1
+                        id: id_scrollView_russian
+                        on_scroll_move: root.scroll_moving('german')
+                        AnjaLabel:
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            text: str(root.russian_text)
+                            #size_hint: 1.,0.9
+                            on_ref_press: root.call_modify_word_screen(args[1],'german')
+                            halign: 'left'
+                            markup: True
+                            padding: 30,0
+    
+            GridLayout:
+                rows: 6
+                padding: 10
+                AnjaButton:
+                    text: 'Settings'
+                    #size_hint: 1, 0.2
+                    on_press: root.change_settings()
+                AnjaButton:
+                    text: 'Load Words'
+                    #size_hint: 1, 0.2
+                    on_press: root.load_words_from_file_part_1()
+                AnjaButton:
+                    text: 'New Words'
+                    #size_hint: 1, 0.2
+                    on_press: root.add_new_words()
+                AnjaButton:
+                    text: 'Ask Direction 1'
+                    #size_hint: 1, 0.2
+                    on_press: root.ask_direction_1()
+                AnjaButton:
+                    text: 'Ask Direction 2'
+                    #size_hint: 1, 0.2
+                    on_press: root.ask_direction_2()
+    AnjaScreen:
+        name: 'NewWords_Screen'
+        GridLayout:
+            cols:2
+            rows: 3
+            padding: 20
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'Russian'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaTextInput:
+                    id:russian_new_word
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'German'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaTextInput:
+                    id:german_new_word
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'ex.'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaTextInput:
+                    id:russian_new_ex
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'ex.'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaTextInput:
+                    id:german_new_ex
+                    size_hint: 1.,0.7   
+            AnjaButton:
+                text: 'Return'
+                on_press: root.return_main_screen()
+            AnjaButton:
+                text: 'add'
+                on_press: root.add_one_new_word(russian_new_word.text,german_new_word.text,russian_new_ex.text,german_new_ex.text)
+    AnjaScreen:
+        name: 'SettingsScreen'
+        GridLayout:
+            cols:2
+            rows: 8
+            padding: 20 
+            AnjaLabel:
+                text: 'Max Amount of Words'
+                size_hint: 1.,0.3
+                bold: True
+            AnjaFloatInput:
+                id: id_maxAmountWords
+            AnjaLabel:
+                text: 'Times to Repeat'
+                size_hint: 1.,0.3
+                bold: True
+            AnjaFloatInput:
+                id: id_timesToRepeat
+            AnjaLabel:
+                text: 'When to reask 1st time (hrs)'
+                size_hint: 1.,0.3
+                bold: True
+            AnjaFloatInput:
+                id: id_1stTime
+            AnjaLabel:
+                text: 'When to reask 2nd time (hrs)'
+                size_hint: 1.,0.3
+                bold: True
+            AnjaFloatInput:
+                id: id_2ndTime
+            AnjaLabel:
+                text: 'When to reask 3rd time (hrs)'
+                size_hint: 1.,0.3
+                bold: True
+            AnjaFloatInput:
+                id: id_3rdTime
+            AnjaLabel:
+                text: 'When to reask 4th time (hrs)'
+                size_hint: 1.,0.3
+                bold: True
+            AnjaFloatInput:
+                id: id_4thTime
+            
+            AnjaButton:
+                text: 'chancel'
+                on_press: root.return_main_screen()
+            AnjaButton:
+                text: 'accept'
+                on_press: root.apply_changed_settings(id_maxAmountWords.text,id_timesToRepeat.text,id_1stTime.text,id_2ndTime.text,id_3rdTime.text,id_4thTime.text)
+    AnjaScreen:
+        name: 'Direction1Screen'   
+        GridLayout:
+            cols:2
+            rows: 3
+            padding: 20
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'Russian'
+                    id: dir1_russian_how_many_label
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaTextInput:
+                    id:dir1_russian_word
+                    multiline: False
+                    text_validate_unfocus: False
+                    size_hint: 1.,0.7  
+                    on_text_validate: root.check_word_dir1(dir1_russian_word.text) 
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'German'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaLabel:
+                    text: root.dir1_german_word
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'ex.'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaLabel:
+                    text:root.dir1_russian_ex
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'ex.'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaLabel:
+                    text:root.dir1_german_ex
+                    size_hint: 1.,0.7   
+            AnjaButton:
+                text: 'Return'
+                on_press: root.return_main_screen()
+            AnjaButton:
+                id: id_dir1_check_button
+                text: root.dir1_check_button_text
+                on_press: root.check_word_dir1(dir1_russian_word.text)
+ 
+    AnjaScreen:
+        name: 'Direction2Screen'   
+        GridLayout:
+            cols:2
+            rows: 3
+            padding: 20
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'Russian'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaLabel:
+                    text: root.dir2_russian_word
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'German'
+                    id: dir2_german_how_many_label
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaTextInput:
+                    id:dir2_german_word
+                    multiline: False
+                    text_validate_unfocus: False
+                    size_hint: 1.,0.7  
+                    on_text_validate: root.check_word_dir2(dir2_german_word.text)            
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'ex.'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaLabel:
+                    text:root.dir2_russian_ex
+                    size_hint: 1.,0.7
+            GridLayout:
+                rows:2
+                AnjaLabel:
+                    text: 'ex.'
+                    size_hint: 1.,0.3
+                    bold: True
+                AnjaLabel:
+                    text:root.dir2_german_ex
+                    size_hint: 1.,0.7   
+            AnjaButton:
+                text: 'Return'
+                on_press: root.return_main_screen()
+            AnjaButton:
+                id: id_dir2_check_button
+                text: root.dir2_check_button_text
+                on_press: root.check_word_dir2(dir2_german_word.text)
+                               
+    AnjaScreen:
+        name: 'ModifyWords_Screen'
+        GridLayout:
+            cols:1
+            rows: 2
+            padding: 20
+            GridLayout:
+                cols:2
+                rows: 3
+                padding: 20
+                GridLayout:
+                    rows:2
+                    AnjaLabel:
+                        text: 'Russian'
+                        size_hint: 1.,0.3
+                        bold: True
+                    AnjaTextInput:
+                        id:russian_modify_word
+                        size_hint: 1.,0.7
+                GridLayout:
+                    rows:2
+                    AnjaLabel:
+                        text: 'German'
+                        size_hint: 1.,0.3
+                        bold: True
+                    AnjaTextInput:
+                        id:german_modify_word
+                        size_hint: 1.,0.7
+                GridLayout:
+                    rows:2
+                    AnjaLabel:
+                        text: 'ex.'
+                        size_hint: 1.,0.3
+                        bold: True
+                    AnjaTextInput:
+                        id:russian_modify_ex
+                        size_hint: 1.,0.7
+                GridLayout:
+                    rows:2
+                    AnjaLabel:
+                        text: 'ex.'
+                        size_hint: 1.,0.3
+                        bold: True
+                    AnjaTextInput:
+                        id:german_modify_ex
+                        size_hint: 1.,0.7   
+                AnjaButton:
+                    text: 'Delete Word'
+                    on_press: root.delete_word(russian_modify_word.text,german_modify_word.text,russian_modify_ex.text,german_modify_ex.text)
+                AnjaButton:
+                    text: 'Modify'
+                    on_press: root.modify_word(russian_modify_word.text,german_modify_word.text,russian_modify_ex.text,german_modify_ex.text)
+            AnjaButton:
+                text: 'Chancel'
+                on_press: root.return_main_screen()
+                size_hint_y: 0.3
+                padding: 20,20
+      
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            BoxLayout:
+                size_hint_y: None
+                height: 30
+                Button:
+                    text: "Cancel"
+                    on_release: root.cancel()
+                Button:
+                    text: "Load"
+                    on_release: root.load(filechooser.path, filechooser.selection)       
+
+
+
